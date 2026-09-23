@@ -189,6 +189,11 @@ function verifyResources(resources) {
       missing.push(`Queue ${queue}`);
     }
   }
+  // Skip Vectorize entirely when wrangler.jsonc has no indexes (Workers Free
+  // tokens often cannot list Vectorize; listing empty config would fail dry-run).
+  if (resources.indexes.length === 0) {
+    return missing;
+  }
   const indexes = listVectorize();
   for (const indexName of resources.indexes) {
     const existing = indexes.find((item) => item?.name === indexName);
